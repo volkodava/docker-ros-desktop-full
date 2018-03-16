@@ -4,7 +4,7 @@ VNC/SSH ROS desktop inside a docker container.
 
 ### Getting up and running
 ```bash
-docker run -it --rm anatoliiv/docker-ros-desktop-full:latest
+docker run -it --rm -p 5900:5900 -p 2222:2222 anatoliiv/docker-ros-desktop-full:latest
 ```
 
 ### Build docker image
