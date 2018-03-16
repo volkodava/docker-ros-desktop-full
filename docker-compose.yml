@@ -1,0 +1,12 @@
+version: '3.0'
+
+services:
+  rosdesktop:
+    build: .
+    image: anatoliiv/docker-ros-desktop-full:latest
+    container_name: ros_desktop_default
+    ports:
+      - "5900:5900"
+      - "2222:2222"
+    stdin_open: true
+    tty: true
