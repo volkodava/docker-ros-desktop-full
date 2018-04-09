@@ -1,5 +1,6 @@
 FROM ubuntu:16.04
 MAINTAINER Anatolii Volkodav <volkodavav@gmail.com>
+ENV ROS_DISTRO=kinetic
 
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -58,6 +59,7 @@ RUN apt-get update \
 RUN apt-get update \
     && apt-get install -y \
         supervisor \
+        git \
         build-essential \
         less \
         sed \
@@ -68,10 +70,13 @@ RUN apt-get update \
         wget \
         sudo \
         net-tools \
+        netbase \
         telnet \
         bzip2 \
         unzip \
         software-properties-common \
+        ca-certificates \
+        apt-transport-https \
         openssh-server \
     && apt-get autoclean \
     && apt-get autoremove \
@@ -91,6 +96,41 @@ RUN add-apt-repository "deb http://archive.ubuntu.com/ubuntu $(lsb_release -sc) 
     && rosdep init \
     && rosdep update \
     && echo "source /opt/ros/kinetic/setup.bash" >> ~/.bashrc \
+    && apt-get autoclean \
+    && apt-get autoremove \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN sh -c 'echo "deb [ arch=amd64 ] http://packages.dataspeedinc.com/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-dataspeed-public.list' \
+    && apt-key adv --keyserver keyserver.ubuntu.com --recv-keys FF6D3CDA \
+    && apt-get update \
+    && sh -c 'echo "yaml http://packages.dataspeedinc.com/ros/ros-public-'${ROS_DISTRO}'.yaml '${ROS_DISTRO}'" > /etc/ros/rosdep/sources.list.d/30-dataspeed-public-'${ROS_DISTRO}'.list' \
+    && rosdep update \
+    && apt-get install -y \
+        ros-${ROS_DISTRO}-dbw-mkz \
+        ros-${ROS_DISTRO}-cv-bridge \
+        ros-${ROS_DISTRO}-pcl-ros \
+        ros-${ROS_DISTRO}-image-proc \
+    && apt-get autoclean \
+    && apt-get autoremove \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN apt-get update \
+    && apt-get install -y \
+        python2.7 \
+        python2.7-dev \
+        python-pip \
+    && pip2 install --no-cache-dir Cython \
+    && apt-get install -y \
+        python3 \
+        python3-dev \
+        python3-pip \
+        protobuf-compiler \
+        python3-pil \
+        python3-lxml \
+        python3-tk \
+        libssl-dev \
+        libffi-dev \
+        python3-dev \
     && apt-get autoclean \
     && apt-get autoremove \
     && rm -rf /var/lib/apt/lists/*
